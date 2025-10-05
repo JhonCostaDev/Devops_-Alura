@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 read -e -p "Enter folder path: " folder
 
