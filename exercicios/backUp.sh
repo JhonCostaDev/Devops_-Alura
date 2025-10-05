@@ -7,6 +7,7 @@
 
 read -e -p "Enter the folder name: " FILE
 
+
 #montando o caminho real do arquivo
 REALPATH="$(realpath $FILE)"
 

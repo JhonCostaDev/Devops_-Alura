@@ -1,4 +1,4 @@
-# Atividades do Modulo
+# Atividades do Modulo - Shell Scripting
 
 1. Elabore um script simples que exiba uma mensagem de boas-vindas quando 
 executado.
