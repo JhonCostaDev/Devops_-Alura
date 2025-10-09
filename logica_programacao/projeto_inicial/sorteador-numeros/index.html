@@ -20,7 +20,7 @@
 
                     <div class="container__campo">
                         <label class="texto__paragrafo">Quantidade de números</label>
-                        <input class="container__input" id="quantidade" type="number" min="1">
+                        <input class="container__input" id="quantidade" type="number" min="1" step="1">
                     </div>
                     
                     <div class="container__campo">
@@ -39,8 +39,8 @@
                     <button onclick="reiniciar()" id="btn-reiniciar" class="container__botao-desabilitado" >Reiniciar</button>
                 </div>
 
-                <div class="container__texto" id="resultado">
-                    <label class="texto__paragrafo">Números sorteados:  nenhum até agora</label>
+                <div class="container__texto">
+                    <label class="texto__paragrafo">Números sorteados:  <span id="resultado">nenhum até agora</span></label>
                 </div>
             </div>
 
