@@ -26,9 +26,9 @@
         <label class="campo-grupo">
           <span class="texto-medio-azul">Produto</span>
           <select class="produto-input" name="produto" id="produto">
-            <option value="Fone de ouvido - R$100">Fone de ouvido - R$100</option>
-            <option value="Celular - R$1400">Celular - R$1400</option>
-            <option value="Oculus VR - R$5000">Oculus VR - R$5000</option>
+            <option value="Fone de ouvido">Fone de ouvido - R$100</option>
+            <option value="Celular">Celular - R$1400</option>
+            <option value="Oculus VR">Oculus VR - R$5000</option>
           </select>
           </div>
         </label>
@@ -36,11 +36,11 @@
         <section class="parte-inferior">
           <label class="campo-grupo">
             <span class="texto-medio-azul">Qtde.</span>
-            <input class="quantidade-input" id="quantidade" type="number" placeholder="100">
+            <input class="quantidade-input" id="quantidade" type="number" placeholder="100" min="1" required>
           </label>
 
           <section class="botoes-wrapper">
-            <button onclick="adicionar()" type="button" class="botao-form botao-adicionar">Adicionar</button>
+            <button type="submit" class="botao-form botao-adicionar">Adicionar</button>
             <button onclick="limpar()" type="button" class="botao-form botao-limpar">Limpar</button>
           </section>
         </section>
@@ -55,10 +55,10 @@
         <h2 class="carrinho__titulo">Produtos no carrinho</h2>
       </div>
 
-      <section class="carrinho__produtos" id="lista-produtos">
-        <section class="carrinho__produtos__produto">
-          <span class="texto-azul">1x</span> Celular <span class="texto-azul">R$1400</span>
-        </section>
+      <section class="carrinho__produtos" >
+        <ul class="carrinho__produtos__produto" id="lista-produtos">
+          <!-- <span class="texto-azul">1x</span> Celular <span class="texto-azul">R$1400</span> -->
+        </ul>
       </section>
 
       <div class="divisoria"></div>
