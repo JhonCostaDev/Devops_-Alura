@@ -1,0 +1,6 @@
+Linguagem de programação: Python
+Arquitetura do projeto
+- Aplicação web com Flask
+-Banco de dados PostgreSQL
+- Docker
+- CI/CD com GitHub Actions

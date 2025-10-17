@@ -9,3 +9,27 @@ Nesta sequência de desafios não obrigatórios você irá desenvolver a lógica
 4. Implemente uma função que aceite um número como parâmetro e utilize um bloco condicional para determinar se o número é par ou ímpar.
 
 5. Crie uma função que converta a temperatura de Celsius para Fahrenheit e vice-versa. Utilize uma variável para indicar a escala desejada e um bloco condicional para determinar qual conversão realizar
+
+Desafios: hora da prática
+
+6. Crie uma função que valide se um número é positivo, negativo ou zero.
+
+7. Implemente uma função que verifique se uma pessoa é maior de idade.
+
+8. Desenvolva uma função que valide se uma string é vazia ou não.
+
+9. Crie uma função que determine se um ano é bissexto
+
+10. Implemente uma função que calcule a média de dois números, interrompendo a execução se algum dos números não for válido.
+
+11. Desenvolva uma função que receba um array como parâmetro e retorne o seu tamanho.
+
+12. Crie um array e utilize a função includes para verificar se um elemento específico está presente
+
+13. Implemente uma função que receba um array e um elemento, e retorne se o elemento está presente no array.
+
+14. Crie um array de strings e utilize includes para verificar se uma determinada string está presente.
+
+15. Desenvolva uma função que receba um array de objetos representando estudantes de um curso e um objeto que representa um estudante procurado. Depois retorne se o objeto está presente no array.
+
+16. Crie uma função que receba um array de números e retorne a soma dos elementos pares e o produto dos elementos ímpares.

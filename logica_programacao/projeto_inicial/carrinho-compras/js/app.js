@@ -62,7 +62,7 @@ fetch("./data/listProducts.json")
             // Exibe a lista de produtos selecionados
             displayListProduct();
             
-            
+            document.querySelector("#quantidade").value = "";
 
         });
 

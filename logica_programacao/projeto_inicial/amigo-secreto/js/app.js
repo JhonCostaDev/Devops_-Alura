@@ -3,8 +3,12 @@ const friendsList = [];
 
 //Função chamada pelo btn sortear, 
 function sortear() {
-    //array que receberá os pares sorteados
     const pairs = [];
+    
+    if(friendsList.length < 4) {
+        alert("Adicione pelo menos 4 amigos");
+    } else {
+        //array que receberá os pares sorteados
 
     //verifica se o número de indivíduos do array é par
     if(friendsList.length % 2 !== 0) {
@@ -23,8 +27,7 @@ function sortear() {
     // Chama a função que exibirá no html os pares selecionados.
     showPairs(pairs);
     }
-
-    
+    }
 }
 
 // Função responsável por exibir os pares no html
@@ -53,7 +56,11 @@ document.querySelector(".form").addEventListener("submit", (e) => {
     const showList = document.querySelector("#lista-amigos");
 
     //adiciona o conteúdo do input text no array de amigos
-    friendsList.push(friendName);
+    if(friendsList.includes(friendName)) {
+        alert("Este amigo já foi adicionado!")
+        return undefined
+    }
+    friendsList.push(friendName.toLowerCase());
     
     //Reseta a lista de amigos para evitar duplicidade no html
     showList.textContent = "";
