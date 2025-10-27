@@ -9,9 +9,9 @@ echo "Checking logs in folder path: $LOG_DIR"
 find $LOG_DIR -name "*.log" -print0 | while IFS= read -r -d '' arquivo; do
 	#echo "Arquivo encontrado $arquivo"
 	grep "ERROR" $arquivo > "${arquivo}.filtrado"
-	grep "SENSITIVE_DATA" >> "${arquivo}.filtrado"
+	grep "SENSITIVE_DATA" $arquivo >> "${arquivo}.filtrado"
 	
-	#cobrindo dados sensiveis
+	#cobrindo dados sensiveis com REDACTED
 	sed -i 's/User password is .*/User password is REDACTED/g' "${arquivo}.filtrado"
     sed -i 's/User password reset request with token .*/User password reset request with token REDACTED/g' "${arquivo}.filtrado"
     sed -i 's/API key leaked: .*/API key leaked: REDACTED/g' "${arquivo}.filtrado"
@@ -19,4 +19,6 @@ find $LOG_DIR -name "*.log" -print0 | while IFS= read -r -d '' arquivo; do
     sed -i 's/User session initiated with token: .*/User session initiated with token: REDACTED/g' "${arquivo}.filtrado"
     # ✗ sort myapp-frontend.log.filtrado -o logs-ordenados
     sort "${arquivo}.filtrado" -o "${arquivo}.filtrado"
+
+    uniq "${arquivo}.filtrado" > "${arquivo}.unico"
 done

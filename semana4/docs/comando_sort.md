@@ -1,4 +1,4 @@
-explorando opções do comando sort
+# Explorando opções do comando sort
 
 
 O comando sort no linux é usado para ordenar linhas de texto em arquivos ou na saída de outros comandos. Ele organiza os dados em ordem alfabética ou numérica, dependendo da necessidade. Abaixo, estão algumas das suas principais opções:

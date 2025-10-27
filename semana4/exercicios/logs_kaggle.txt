@@ -1,0 +1,3 @@
+logs utilizados para estudo
+https://www.kaggle.com/datasets/vishnu0399/server-logs?resource=download
+https://www.kaggle.com/datasets/ggsri123/linux-logs

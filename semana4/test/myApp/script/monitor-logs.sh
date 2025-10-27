@@ -23,6 +23,7 @@ for LOG_FILE in "$LOG_FOLDER"/*.log; do
     
     # Extract lines with "ERROR" and save to .filter file
     grep "ERROR" "$LOG_FILE" > "$FILTER_FILE"
+    echo "created $FILTER_FILE"
     
     # Replace sensitive data
     # 
