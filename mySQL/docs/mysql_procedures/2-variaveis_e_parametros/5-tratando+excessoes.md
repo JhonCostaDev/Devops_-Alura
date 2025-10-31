@@ -1,31 +1,39 @@
-Vamos criar um novo script e dentro dele executar a seguinte consulta: SELECT * FROM clientes WHERE client_id = '10001'.
+# Trabalhando com Excessões no MySQL Store Procedure
+Ao realiza a seguinte consulta em uma nova query .sql:
 
+```sql
 SELECT * FROM clientes WHERE client_id = '10001';
-Copiar código
+```
 O que ocorrerá ao executar essa consulta? Clicamos no ícone de raio na parte superior para executar.
 
-cliente_id	nome	cpf	contato
-NULL	NULL	NULL	NULL
+    cliente_id	nome	cpf	    contato
+    NULL	    NULL	NULL	NULL
+
 Todos os campos estão vazios, indicando que o cliente 100001 não está na base de dados de clientes.
 
-Erro de Chave Estrangeira ao Inserir Aluguel
-Agora, suponhamos que queiramos adicionar um novo aluguel. Vamos inserir o aluguel 10005, mas ao invés de usar o cliente 1004, usaremos o cliente 10001, que não existe na base de dados. Definiremos as datas do aluguel de 17 a 25 e a taxa diária será mantida em 40.
+>Erro de Chave Estrangeira ao Inserir Aluguel
 
-CALL novoAluguel_24('10005','10001','8635','2023-03-17','2023-03-25',40);
-Copiar código
-Ao executar essa ação, receberemos uma mensagem de erro com o código 1452. Embora o texto esteja em inglês, ao passarmos o cursor sobre ele, veremos que indica um problema de chave estrangeira relacionado aos clientes. Isso acontece porque o cliente em questão não existe na base de dados.
+Agora, suponhamos que queiramos adicionar um novo aluguel. Vamos inserir o aluguel 10005, mas ao invés de usar o cliente 1004, usaremos o cliente 10001, que não existe na base de dados. 
+
+Definiremos as datas do aluguel de 17 a 25 e a taxa diária será mantida em 40.
+
+```sql
+CALL novoAluguel_4('10005','10001','8635','2023-03-17','2023-03-25',40);
+```
+Ao executar essa ação, receberemos uma mensagem de erro com o código `1452`. Embora o texto esteja em inglês, ao passarmos o cursor sobre ele, veremos que indica um problema de chave estrangeira relacionado aos clientes. Isso acontece porque o cliente em questão não existe na base de dados.
 
 O que queremos é que, ao executar a nossa procedure (procedimento), não recebamos esse erro. Em vez disso, desejamos que seja exibido um alerta ou uma mensagem, sem que ocorra um erro dentro do banco de dados. Como fazemos isso?
 
-Criando e Modificando a Procedure
+## Criando e Modificando a Procedure
 Voltamos ao script anterior e copiamos a procedure que criamos no vídeo passado, começando pelo primeiro USE até o DELIMITER.
 
+```sql
 USE `insightplaces`;
-DROP PROCEDURE IF EXISTS `insightplaces`.`novoAluguel_24`;
+DROP PROCEDURE IF EXISTS `insightplaces`.`novoAluguel_4`;
 
 DELIMITER $$
 USE `insightplaces`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_24`
+CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_4`
 (vAluguel VARCHAR(10), vCliente VARCHAR(10), vHospedagem VARCHAR(10), vDataInicio DATE, vDataFinal DATE, vPrecoUnitario DECIMAL(10,2))
 BEGIN
     DECLARE vDias INTEGER DEFAULT 0;
@@ -37,15 +45,17 @@ BEGIN
     INSERT INTO alugueis VALUES (vAluguel, vCliente, vHospedagem, vDataInicio, vDataFinal, vPrecoTotal);
 END$$
 DELIMITER ;
-Copiar código
-Vamos então colar e modificar o ID da procedure para 25.
+```
 
+Vamos então colar e modificar o ID da procedure para 5.
+
+```sql
 USE `insightplaces`;
-DROP PROCEDURE IF EXISTS `insightplaces`.`novoAluguel_25`;
+DROP PROCEDURE IF EXISTS `insightplaces`.`novoAluguel_5`;
 
 DELIMITER $$
 USE `insightplaces`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_25`
+CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_5`
 (vAluguel VARCHAR(10), vCliente VARCHAR(10), vHospedagem VARCHAR(10), vDataInicio DATE, vDataFinal DATE, vPrecoUnitario DECIMAL(10,2))
 BEGIN
     DECLARE vDias INTEGER DEFAULT 0;
@@ -56,16 +66,19 @@ BEGIN
     INSERT INTO alugueis VALUES (vAluguel, vCliente, vHospedagem, vDataInicio, vDataFinal, vPrecoTotal);
 END$$
 DELIMITER ;
-Copiar código
-Tratando Erros com Chave Estrangeira na Procedure
-Para lidar com esse erro e prevenir sua ocorrência, podemos adotar o seguinte procedimento: primeiro, declararemos dentro do BEGIN uma variável denominada vMensagem, que será um VARCHAR() de 100 caracteres. Após essa declaração, utilizaremos o comando DECLARE EXIT HANDLER e especificaremos o número do erro, que é 1452. Após o DECLARE, não será necessário inserir ponto e vírgula, em vez disso, utilizaremos BEGIN e END. O ponto e vírgula virá apenas após o END.
+```
 
+## Tratando Erros com Chave Estrangeira na Procedure
+Para lidar com esse erro e prevenir sua ocorrência, podemos adotar o seguinte procedimento: 
+* primeiro, declararemos dentro do BEGIN uma variável denominada `varMensagem`, que será um `VARCHAR()` de `100` caracteres. Após essa declaração, utilizaremos o comando `DECLARE EXIT HANDLER` e especificaremos o número do erro, que é `1452`. Após o DECLARE, não será necessário inserir ponto e vírgula, em vez disso, utilizaremos `BEGIN` e `END`. O ponto e vírgula virá apenas após o END.
+
+```sql
 USE `insightplaces`;
-DROP PROCEDURE IF EXISTS `insightplaces`.`novoAluguel_25`;
+DROP PROCEDURE IF EXISTS `insightplaces`.`novoAluguel_5`;
 
 DELIMITER $$
 USE `insightplaces`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_25`
+CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_5`
 (vAluguel VARCHAR(10), vCliente VARCHAR(10), vHospedagem VARCHAR(10), vDataInicio DATE, vDataFinal DATE, vPrecoUnitario DECIMAL(10,2))
 BEGIN
     DECLARE vDias INTEGER DEFAULT 0;
@@ -79,17 +92,19 @@ BEGIN
     INSERT INTO alugueis VALUES (vAluguel, vCliente, vHospedagem, vDataInicio, vDataFinal, vPrecoTotal);
 END$$
 DELIMITER ;
-Copiar código
-Dentro do BEGIN, inicializaremos a variável mensagem com o valor "Problema de chave estrangeira associado a alguma entidade da base" devido ao erro que estamos tratando, o erro 1452. Essa mensagem será exibida utilizando SELECT vMensagem.
+```
+Dentro do BEGIN, inicializaremos a variável mensagem com o valor "`Problema de chave estrangeira associado a alguma entidade da base`" devido ao erro que estamos tratando, o erro 1452. Essa mensagem será exibida utilizando SELECT vMensagem.
 
-Caso tudo ocorra como esperado, ao final, também inicializaremos e exibiremos a mensagem. No entanto, desta vez, a mensagem será iniciada com o valor "Aluguel incluído na base com sucesso".
+Caso tudo ocorra como esperado, ao final, também inicializaremos e exibiremos a mensagem. No entanto, desta vez, a mensagem será iniciada com o valor "`Aluguel incluído na base com sucesso`".
 
+```sql
 USE `insightplaces`;
-DROP PROCEDURE IF EXISTS `insightplaces`.`novoAluguel_25`;
+DROP PROCEDURE IF EXISTS `insightplaces`.`novoAluguel_5`;
 
 DELIMITER $$
+
 USE `insightplaces`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_25`
+CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_5`
 (vAluguel VARCHAR(10), vCliente VARCHAR(10), vHospedagem VARCHAR(10), vDataInicio DATE, vDataFinal DATE, vPrecoUnitario DECIMAL(10,2))
 BEGIN
     DECLARE vDias INTEGER DEFAULT 0;
@@ -107,29 +122,36 @@ BEGIN
         SELECT vMensagem;
 END$$
 DELIMITER ;
-Copiar código
+```
+
 Resumindo o que foi feito: inicializamos a variável vMensagem e configuramos um DECLARE EXIT HANDLER para o erro 1452. Se esse erro ocorrer durante a execução da procedure, exibiremos a mensagem de erro correspondente. Por outro lado, se a procedure for concluída sem erros, exibiremos a mensagem de sucesso.
 
-Executando a Procedure Modificada
-Agora, executaremos o código a partir do primeiro USE até o DELIMITER e atualizaremos a página. Dessa forma, teremos do lado esquerdo dentro de "Stored Procedures": novoAluguel_25.
+## Executando a Procedure Modificada
+Agora, executaremos o código a partir do primeiro USE até o DELIMITER e atualizaremos a página. Dessa forma, teremos do lado esquerdo dentro de "Stored Procedures": novoAluguel_5.
 
-Ao chamar a nossa procedure e alterar o ID para 25, ao executar a procedure, podemos confirmar que nenhum erro ocorreu.
+Ao chamar a nossa procedure e alterar o ID para 5, ao executar a procedure, podemos confirmar que nenhum erro ocorreu.
 
-CALL novoAluguel_25('10005','10001','8635','2023-03-17','2023-03-25',40);
-Copiar código
+```sql
+CALL novoAluguel_5('10005','10001','8635','2023-03-17','2023-03-25',40);
+```
+
 Ela foi concluída com sucesso e a mensagem "Problema de chave estrangeira" foi exibida.
 
-vMensagem
-Problema de chave estrangeira associado a alg...
-Se agora colocarmos um cliente que exista, como o 1004, por exemplo, e executarmos, veremos a mensagem "Aluguel incluído na base com sucesso".
 
+    Problema de chave estrangeira associado a alg...
+Se agora colocarmos um cliente que exista, como o 1004, por exemplo, e executarmos, veremos a mensagem 
+        
+        "Aluguel incluído na base com sucesso".
+
+```sql
 CALL novoAluguel_25('10005','1004','8635','2023-03-17','2023-03-25',40);
-Copiar código
+```
 Obtemos:
 
-vMensagem
-Aluguel incluído na base com sucesso.
-Conclusão
+    vMensagem
+    Aluguel incluído na base com sucesso.
+
+### Conclusão
 Portanto, conseguimos tratar erros e evitar que a procedure tenha algum tipo de erro interno que faça com que ela seja abortada. Agora, ela será sempre executada e exibirá uma mensagem quando houver um problema de chave estrangeira.
 
 ## Question - Entendendo o tratamento de erros

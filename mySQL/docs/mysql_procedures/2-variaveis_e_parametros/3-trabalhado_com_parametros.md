@@ -1,5 +1,8 @@
-No vídeo anterior, nós construímos a procedure de inclusão de um novo aluguel, onde declaramos as variáveis, usando os valores default (padrão) e, em seguida, executamos um comando de INSERT. Agora, na procedure que criamos, os valores do identificador do aluguel, do cliente, da hospedagem e assim por diante, estão fixos na declaração da variável.
+# Utilizando parâmetros em Store Procedures no MySQL
 
+Continuando a melhoria da procedure feita anteriormente onde declaramos as variáveis, usando os valores default (padrão) e, em seguida, executamos um comando de INSERT. Agora, na procedure que criamos, os valores do identificador do aluguel, do cliente, da hospedagem e assim por diante, estão fixos na declaração da variável.
+
+```sql
 BEGIN
     DECLARE vAluguel VARCHAR(10) DEFAULT '10001';
     DECLARE vCliente VARCHAR(10) DEFAULT '1002';
@@ -8,20 +11,25 @@ BEGIN
     DECLARE vDataFinal DATE DEFAULT '2023-03-05';
     DECLARE vPrecoTotal DECIMAL(10,2) DEFAULT 550.23;
     INSERT INTO alugueis VALUES (vAluguel, vCliente, vHospedagem, vDataInicio, vDataFinal, vPrecoTotal);
-END$$
-Copiar código
-Portanto, se quisermos incluir um novo aluguel, precisaremos editar a procedure, alterar esses valores dentro dela, salvar a procedure e executá-la. Não há condição para isso funcionar corretamente. No entanto, podemos passar parâmetros para dentro da procedure.
+END
+```
+Portanto, se quisermos incluir um `novo aluguel`, precisaremos editar a procedure, alterar esses valores dentro dela, salvar a procedure e executá-la. Não há condição para isso funcionar corretamente. No entanto, podemos passar parâmetros para dentro da procedure.
 
-Então, a maneira correta é criar uma procedure onde passamos parâmetros e, ao chamá-la, passamos esses parâmetros. Quem serão esses parâmetros? Serão os dados referentes ao aluguel. Portanto, vamos modificar a nossa procedure agora para aceitar parâmetros.
+Então, a maneira correta é `criar uma procedure onde passamos parâmetros e, ao chamá-la, passamos esses parâmetros`. 
 
-Alterando a procedure para aceitar parâmetros
-Vamos copiar a procedure anterior do script, desde o USE `insightplaces`; da linha 19, que aparece primeiro, antes do um DROP, até o comando DELIMITER; do final, na linha 34. Após copiarmos, criaremos um novo script, onde vamos colar esse código. Em seguida, na linha 2 e na linha 5, mudaremos o nome para novoAluguel_23.
+Quem serão esses parâmetros? Serão os dados referentes ao aluguel. Portanto, vamos modificar a nossa procedure agora para aceitar parâmetros.
 
+## Alterando a procedure para aceitar parâmetros
+Vamos copiar a procedure anterior do script, desde o 
+
+USE \`insightplaces\`; da linha 19, que aparece primeiro, antes do um DROP, até o comando `DELIMITER`; do final, na linha 34. Após copiarmos, criaremos um novo script, onde vamos colar esse código. Em seguida, na linha 2 e na linha 5, mudaremos o nome para `novoAluguel_3`.
+
+```sql
 USE `insightplaces`;
-DROP PROCEDURE IF EXISTS `insightplaces`.`novoAluguel_23`;
+DROP PROCEDURE IF EXISTS `insightplaces`.`novoAluguel_3`;
 DELIMITER $$
 USE `insightplaces`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_23`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_3`()
 BEGIN
     DECLARE vAluguel VARCHAR(10) DEFAULT '10001';
     DECLARE vCliente VARCHAR(10) DEFAULT '1002';
@@ -32,58 +40,68 @@ BEGIN
     INSERT INTO alugueis VALUES (vAluguel, vCliente, vHospedagem, vDataInicio, vDataFinal, vPrecoTotal);
 END$$
 DELIMITER ;
-Copiar código
-Vamos começar a trabalhar com essa procedure. O que estamos dizendo é que não vamos inicializar essas variáveis nesse novo script, e sim passá-las como parâmetro. Para isso, a declaração da variável, ou seja, o seu nome e o seu tipo, estará dentro dos parênteses de `novoAluguel_23`(). Então, vamos dizer que essa procedure está apta a receber parâmetros quando ela for chamada. Vamos fazer essa edição.
+```
+Vamos começar a trabalhar com essa procedure. O que estamos dizendo é que não vamos inicializar essas variáveis nesse novo script, e sim passá-las como parâmetro. Para isso, a declaração da variável, ou seja, o seu nome e o seu tipo, estará dentro dos parênteses de `novoAluguel_3`(). Então, vamos dizer que essa procedure está apta a receber parâmetros quando ela for chamada. Vamos fazer essa edição.
 
--- Código omitido
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_23`
+```sql
+CREATE DEFINER=`root`@`localhost` 
+PROCEDURE `novoAluguel_3`
 (vAluguel VARCHAR(10), vCliente VARCHAR(10), vHospedagem VARCHAR(10), vDataInicio DATE, vDataFinal DATE, vPrecoTotal DECIMAL(10,2))
+```
 
--- Código omitido
-Copiar código
+
 Então, com um "Enter", passamos os parênteses para a linha de baixo e adicionamos a declaração de todas as variáveis como no BEGIN, lembrando apenas de remover o DEFAULT. Com isso, temos a declaração dos parâmetros. E, claro, se já definimos a variável dentro dos parâmetros, não precisamos ter o DECLARE dentro do BEGIN, então podemos apagá-lo.
 
 Nossa rotina ficou assim: declaramos ela, colocamos a passagem de parâmetros e temos o seu conteúdo, que é apenas um INSERT, usando os parâmetros passados no início da procedure:
 
+```sql
 USE `insightplaces`;
-DROP PROCEDURE IF EXISTS `insightplaces`.`novoAluguel_23`;
+DROP PROCEDURE IF EXISTS `insightplaces`.`novoAluguel_3`;
 DELIMITER $$
 USE `insightplaces`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_23`
+CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_3`
 (vAluguel VARCHAR(10), vCliente VARCHAR(10), vHospedagem VARCHAR(10), vDataInicio DATE, vDataFinal DATE, vPrecoTotal DECIMAL(10,2))
 BEGIN
     INSERT INTO alugueis VALUES (vAluguel, vCliente, vHospedagem, vDataInicio, vDataFinal, vPrecoTotal);
 END$$
 DELIMITER ;
-Copiar código
-Vamos executar esse script e recebemos que o retorno foi executado com sucesso. Se atualizarmos o "StoredPorcedures", na coluna da direita, aparece o novoAluguel_23.
+```
 
-Incluindo novos alugueis
-Vamos, agora, inserir o aluguel 10002, porque incluímos o 10001 no vídeo anterior. Para fazer isso, codamos CALL novoAluguel_23() e, dentro dos parênteses, colocamos agora os parâmetros. Usaremos os dados da procedure anterior como referência.
+Vamos executar esse script e recebemos que o retorno foi executado com sucesso. Se atualizarmos o `"StoredPorcedures"`, na coluna da direita, aparece o novoAluguel_3.
+
+## Incluindo novos alugueis
+Vamos, agora, inserir o aluguel `10002`, porque incluímos o `10001` no vídeo anterior. Para fazer isso, codamos CALL novoAluguel_3() e, dentro dos parênteses, colocamos agora os parâmetros. Usaremos os dados da procedure anterior como referência.
 
 Observação: O instrutor copia os dados e deixa comentado apenas para facilitar a inclusão do aluguel 10002. Vocês não precisam copiar os dados se não quiserem.
-
+```sql
 -- 1002
 
 CALL novoAluguel_23('10002', '1003', '8635', '2023-03-06', '2023-03-10', 600)
-Copiar código
-O ID do aluguel é o 10002. Colocamos outro cliente, o 1003, a hospedagem será no mesmo local, mas a data será a partir do dia 6, já que o hóspede 10001 vai deixar o apartamento no dia 5. E o novo hóspede fica hospedado até 2023-03-10. E o valor ficou 600 unidades monetárias.
+```
+O ID do aluguel é o `10002`. Colocamos outro cliente, o 1003, a hospedagem será no mesmo local, mas a data será a partir do dia 6, já que o hóspede 10001 vai deixar o apartamento no dia 5. E o novo hóspede fica hospedado até 2023-03-10. E o valor ficou 600 unidades monetárias.
 
-Após executarmos esse código, escreveremos SELECT * FROM alugueis WHERE aluguel_id = '10002';. Vamos executar esse código e teremos o aluguel incluído.
+Após executarmos esse código, escreveremos 
+```sql
+SELECT * FROM alugueis WHERE aluguel_id = '10002';
+```
+Vamos executar esse código e teremos o aluguel incluído.
 
 Portanto, se tivermos que incluir um novo aluguel, não precisamos editar a procedure e modificar a inicialização das variáveis. Basta executarmos de novo a procedure, passando um novo ID e os demais dados por parâmetros, como a acabamos de fazer. Façamos um novo exemplo.
 
+```sql
 CALL novoAluguel_23('10003', '1004', '8635', '2023-03-10', '2023-03-12', 250)
-Copiar código
+```
 Ao executarmos essa nova procedure, não temos nenhum problema. Em seguida, basta executarmos:
 
+```sql
 SELECT * FROM alugueis WHERE aluguel_id IN ('10002', 10003);
-Copiar código
-aluguel_id	cliente_id	hospedagem_id	data_inicio	data_fim	preco_total
-10002	1003	8635	2023-03-06	2023-03-10	600.00
-10003	1004	8635	2023-03-10	2023-03-12	250.00
-Ao rodarmos esse código, recebemos os dois aluguéis incluídos usando a procedure. No próximo vídeo, vamos melhorar mais um pouco essa procedure.
+```
+
+    aluguel_id	cliente_id	hospedagem_id	data_inicio	data_fim	preco_total
+    10002	    1003	    8635	        2023-03-06	2023-03-10	600.00
+    10003	    1004	    8635	        2023-03-10	2023-03-12	250.00
+Ao rodarmos esse código, recebemos os dois aluguéis incluídos usando a procedure. 
 
 
 ## Question -  Avançando na personalização de Stored Procedures
