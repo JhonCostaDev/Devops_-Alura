@@ -116,3 +116,129 @@ Assim, temos o seguinte retorno:
     Null	    Null	    Null	        Null	        Null	    Null
 
 Deu certo, dia 18 de abril de 2023 e a pessoa pagou apenas 200 unidades monetárias, que é o 40 x 5. Ela estava pagando por cinco diárias, entrou no dia 12 e sairá somente no dia 18, pois sábado e domingo não contam. Assim, implementamos o pedido.
+
+## Question - Dias pares e ímpares
+
+Analise a procedure desenvolvida:
+
+```SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_12`(vAluguel VARCHAR(10), vClienteNome VARCHAR(150), vHospedagem VARCHAR(10), vDataInicio DATE,
+vDias INTEGER, vPrecoUnitario DECIMAL(10,2))
+BEGIN
+    DECLARE vCliente VARCHAR(10);
+    DECLARE vContador INTEGER;
+    DECLARE vDiaSemana INTEGER;
+    DECLARE vDataFinal DATE;
+    DECLARE vNumCliente INTEGER;
+    DECLARE VPrecoTotal DECIMAL(10,2);
+    DECLARE vMensagem VARCHAR(100);
+    DECLARE EXIT HANDLER FOR 1452
+    BEGIN
+        SET vMensagem = 'Problema de chave estrangeira associado a alguma entidade da base.';
+        SELECT vMensagem;
+    END;
+    SET vNumCliente = (SELECT COUNT(*) FROM clientes WHERE nome = vClienteNome);
+    CASE 
+    WHEN vNumCliente = 0 THEN
+        SET vMensagem = 'Este cliente não pode ser usado para incluir o aluguel porque não existe.';
+        SELECT vMensagem;
+    WHEN vNumCliente = 1 THEN
+        
+        SET vContador = 1;
+        SET vDataFinal = vDataInicio;
+        WHILE vContador < vDias
+        DO
+            SET vDiaSemana = (SELECT DAYOFWEEK(STR_TO_DATE(vDataFinal,'%Y-%m-%d')));
+            IF (vDiaSemana <> 7 AND vDiaSemana <> 1) THEN
+                SET vContador = vContador + 1;
+            END IF;
+            SET vDataFinal = (SELECT vDataFinal + INTERVAL 1 DAY) ;
+        END WHILE;
+        SET vPrecoTotal = vDias * vPrecoUnitario;
+        SELECT cliente_id INTO vCliente FROM clientes WHERE nome = vClienteNome;
+        INSERT INTO alugueis VALUES (vAluguel, vCliente, vHospedagem, vDataInicio, 
+        vDataFinal, vPrecoTotal);
+        SET vMensagem = 'Aluguel incluido na base com sucesso.';
+        SELECT vMensagem;
+    WHEN vNumCliente > 1 THEN
+       SET vMensagem = 'Este cliente não pode ser usado para incluir o aluguel porque não existe.';
+       SELECT vMensagem;
+    END CASE;
+END
+```
+
+Um trecho específico foi responsável por calcular a data final de um aluguel, considerando apenas os dias úteis da semana (excluindo sábados e domingos).
+
+```sql
+SET vContador = 1;
+        SET vDataFinal = vDataInicio;
+        WHILE vContador < vDias
+        DO
+            SET vDiaSemana = (SELECT DAYOFWEEK(STR_TO_DATE(vDataFinal,'%Y-%m-%d')));
+            IF (vDiaSemana <> 7 AND vDiaSemana <> 1) THEN
+                SET vContador = vContador + 1;
+            END IF;
+            SET vDataFinal = (SELECT vDataFinal + INTERVAL 1 DAY) ;
+        END WHILE;
+```
+
+Agora, enfrentamos um novo desafio: ajustar esse cálculo para considerar apenas dias pares do mês como dias válidos de hospedagem. Isso requer uma reavaliação da lógica atual, substituindo a verificação dos dias da semana pela verificação se o dia do mês é par.
+
+Como você reescreveria o trecho da stored procedure para que apenas os dias pares do mês contenham dias válidos de hospedagem, porém, mantenha o restante da lógica intacta? Escolha a alternativa correta.
+
+```sql
+Alternativa incorreta
+SET vContador = 1;
+SET vDataFinal = vDataInicio;
+WHILE vContador < vDias DO
+    IF DAYOFWEEK(vDataFinal) MOD 2 = 0 THEN
+        SET vContador = vContador + 1;
+    END IF;
+    SET vDataFinal = vDataFinal + INTERVAL 1 DAY;
+END WHILE;
+
+```
+```sql
+SET vContador = 1;
+SET vDataFinal = vDataInicio;
+WHILE vContador < vDias DO
+    SET vDataFinal = vDataFinal + INTERVAL 1 DAY;
+    IF DAY(vDataFinal) % 2 = 0 THEN
+        SET vContador = vContador + 1;
+    END IF;
+END WHILE;
+
+```
+```sql
+SET vContador = 1;
+SET vDataFinal = vDataInicio;
+WHILE vContador < vDias DO
+    SET vDataFinal = vDataFinal + INTERVAL 2 DAY;
+    SET vContador = vContador + 1;
+END WHILE;
+
+```
+```sql
+SET vContador = 0;
+SET vDataFinal = vDataInicio;
+WHILE vContador <= vDias DO
+    SET vDataFinal = vDataFinal + INTERVAL 1 DAY;
+    IF MOD(DAY(vDataFinal), 2) = 1 THEN
+        SET vContador = vContador + 1;
+    END IF;
+END WHILE;
+
+```
+```sql
+SET vContador = 1;
+SET vDataFinal = vDataInicio;
+WHILE vContador < vDias DO
+    SET vDiaMes = DAY(vDataFinal);
+    IF MOD(vDiaMes, 2) = 0 THEN
+        SET vContador = vContador + 1;
+    END IF;
+    SET vDataFinal = vDataFinal + INTERVAL 1 DAY;
+END WHILE;
+
+```
+>Esta opção substitui adequadamente a verificação dos dias da semana pela verificação se o dia do mês é par, utilizando MOD(vDiaMes, 2) = 0 para identificar dias pares.
