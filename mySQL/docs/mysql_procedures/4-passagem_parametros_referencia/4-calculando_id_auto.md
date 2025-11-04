@@ -136,22 +136,24 @@ Para conferir se a concatenação está funcionando, selecionamos o trecho de c�
 
 Depois, abaixo do DELIMITER, passamos DELETE FROM alugueis WHERE aluguel_id = '10012' e executamos.
 
+```SQL
 -- Código omitido
 
 DELETE FROM alugueis WHERE aluguel_id = '10012'
 
 -- Código omitido
-Copiar código
+```
 Agora, selecionamos o trecho de código CALL novoAluguel_44('Livia Fogaça', '8635', '2023-05-15', 5, 45); e executamos. Com isso, temos um erro indicando que não foi possível incluir.
 
 Isso aconteceu, pois antes da mensagem Aluguem incluido na base com sucesso, precisamos passar a função CONCAT().
 
+```SQL
 -- Código omitido
 
 SET vMensagem = CONCAT('Aluguel incluido na base com sucesso - ID' + vAluguel);
 
 -- Código omitido
-Copiar código
+```
 Ao executar, temos o retorno abaixo:
 
 Aluguel incluido na base com sucesso. - ID 10012
@@ -171,6 +173,7 @@ Assim, melhoramos a procedure e não precisamos mais entrar com o identificador 
 
 Na procedure abaixo criamos uma forma de obter um novo identificador do aluguel:
 
+```SQL
 CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_44`(vClienteNome VARCHAR(150), vHospedagem VARCHAR(10), vDataInicio DATE,
 vDias INTEGER, vPrecoUnitario DECIMAL(10,2))
 BEGIN
@@ -204,26 +207,30 @@ BEGIN
        SELECT vMensagem;
     END CASE;
 END
-Copiar código
+```
+
 Em sistemas de gerenciamento de banco de dados, como o MySQL, é comum a necessidade de gerar um identificador único (ID) para novas entradas de dados. A expressão SELECT CAST(MAX(CAST(aluguel_id AS UNSIGNED)) + 1 AS CHAR) INTO vAluguel FROM alugueis; demonstra uma maneira de calcular automaticamente o próximo ID para um novo aluguel. Esta expressão é especialmente útil quando não se pode ou não se quer usar o auto_increment.
 
-Diante desse cenário, o que a expressão SELECT CAST(MAX(CAST(aluguel_id AS UNSIGNED)) + 1 AS CHAR) INTO vAluguel FROM alugueis; realiza na tabela alugueis?
+Diante desse cenário, o que a expressão abaixo  realiza na tabela alugueis? 
+```SQL
+SELECT CAST(MAX(CAST(aluguel_id AS UNSIGNED)) + 1 AS CHAR) INTO vAluguel FROM alugueis;
 
+```
 Selecione uma alternativa
 
-Converte todos os aluguel_id para texto antes de selecionar o valor máximo e armazenar em vAluguel.
+- ( )Converte todos os aluguel_id para texto antes de selecionar o valor máximo e armazenar em vAluguel.
 
 
-Converte o maior aluguel_id existente em um número, soma 1, e então converte o resultado de volta para texto, armazenando-o em vAluguel.
+- ( )Converte o maior aluguel_id existente em um número, soma 1, e então converte o resultado de volta para texto, armazenando-o em vAluguel.
 
 
-Subtrai 1 do menor aluguel_id encontrado na tabela alugueis e armazena o resultado em vAluguel.
+- ( )Subtrai 1 do menor aluguel_id encontrado na tabela alugueis e armazena o resultado em vAluguel.
 
 
-Insere diretamente um novo registro na tabela alugueis com o próximo aluguel_id.
+- ( )Insere diretamente um novo registro na tabela alugueis com o próximo aluguel_id.
 
 
-Copia o aluguel_id mais recentemente adicionado sem fazer alterações.
+
 
 
 https://github.com/kirenz/datasets/blob/master/us_counties_2010.csv
