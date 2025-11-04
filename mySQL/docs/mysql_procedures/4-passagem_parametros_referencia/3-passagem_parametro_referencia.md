@@ -1,4 +1,5 @@
-Nossa procedure está ficando grande. São várias linhas que executam a lógica passada pelo nosso cliente para a inclusão de aluguéis na Insight Places.
+# Passagem de Parâmetro por Referência
+
 
 Para melhorar o código, podemos segmentar a procedure em partes. O trecho que implementamos no vídeo anterior, que faz o cálculo da data final pulando os fins de semana, poderia estar isolado em outra procedure. Assim, a procedure principal chamaria essa outra para calcular a data.
 
@@ -12,9 +13,11 @@ Quando passamos por referência, se passarmos esse parâmetro dessa maneira, ele
 
 Então, basta criarmos uma procedure que calcule a data final, passando a variável vDataFinal como referência para essa procedure e, quando ela voltar para o programa principal, poderemos usá-la. Faremos isso!
 
-Criando a procedure calculaDataFinal_43
+# Criando a procedure calculaDataFinal_13
+
 Primeiro, copiamos o trecho de código que começa em SET vContador e termina em END WHILE. Depois, na lateral esquerda, em Schemas, clicamos com o botão direito em "Stored Procedures" e depois em "Create Stored Procedure". Colamos o código e arrumamos a indentação.
 
+```sql
 CREATE PROCEDURE `new_procedure` ()
 BEGIN
 
@@ -31,7 +34,8 @@ DO
 
 END WHILE;
 END
-Copiar código
+```
+
 Agora, precisamos declarar algumas variáveis, pois vDiaSemana e vContador são variáveis declaradas na procedure principal. Então, abaixo de BEGIN, escrevemos DECLARE vContador INTEGER; seguido de DECLARE vDiaSemana INTEGER;.
 
 Na primeira linha, mudamos de new_procedure para calculaDataFinal_43. Porém, vDdataFinal, vDataInicial e vDias virão da procedure principal e precisam voltar para ela. Isso porque precisamos delas na procedure principal para inserir dentro da tabela de aluguéis.
@@ -44,7 +48,8 @@ Não se altera o valor quando voltamos para a procedure principal. Quando passam
 
 O código fica da seguinte forma:
 
-CREATE PROCEDURE `calculaDataFinal_43` (vDataInicio DATE, INOUT vDataFinal DATE, vDias INTEGER)
+```sql
+CREATE PROCEDURE `calculaDataFinal_13` (vDataInicio DATE, INOUT vDataFinal DATE, vDias INTEGER)
 BEGIN
 DECLARE vContador INTEGER;
 DECLARE vDiaSemana INTEGER;
@@ -59,10 +64,11 @@ DO
         SET vDataFinal (SELECT vDataFinal + INTERVAL 1 DAY);
 END WHILE;
 END
-Copiar código
-Feito isso, na lateral direita da tela, logo abaixo do campo de código, clicamos em "Apply > Apply". Assim, temos a calculaDataFinal_43 e a encontramos na lateral esquerda da tela, em Schemas.
+```
 
-Criando e ajustando a procedure no banco de dados
+Feito isso, na lateral direita da tela, logo abaixo do campo de código, clicamos em `"Apply"`. Assim, temos a calculaDataFinal_43 e a encontramos na lateral esquerda da tela, em Schemas.
+
+### Criando e ajustando a procedure no banco de dados
 Copiamos a última versão da procedure, criamos um novo script e colamos. Agora, comentaremos todo o trecho de código que começa em SET vContador e termina em END WHILE, pois não precisaremos mais. Ao fazer isso, mantemos o histórico do que fizemos.
 
 Na linha acima de SET vPrecoTotal, escrevemos CALL calculaDataFinal43 (). Como parâmetro, passamos vDataInicio, vDataFinal, vDias. Depois, próximo do início de código, apagamos as variáveis vContador e vDiaSemana. Como comentamos o código do looping e ele está na sub-rotina, essas declarações não são mais necessárias.
@@ -71,11 +77,12 @@ Se quiséssemos, poderiamos pegar outros trechos do programa e criar subrotinas.
 
 Agora, no início do código, na linha 2 e 5, mudamos para novoAluguel_43. Selecionamos todo o código e executamos.
 
+```sql
 USE `insightplaces`;
-DROP procedure IF EXISTS `insightplaces`.`novoAluguel_43`;
+DROP procedure IF EXISTS `insightplaces`.`novoAluguel_13`;
 DELIMITER $$
 USE `insightplaces` $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_43`
+CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_13`
 (vAluguel VARCHAR(10), vClienteNome VARCHAR(150), vHospedagem VARCHAR(10), vDataInicio DATE, vDias INTEGER, vPrecoUnitario DECIMAL(10,2))
 BEGIN
     DECLARE vCliente VARCHAR(10);
@@ -95,7 +102,7 @@ BEGIN
         SELECT vMensagem;
     WHEN vNumCliente > 1 THEN
 
-        CALL calculaDataFinal43 (vDataInicio, vDataFinal, vDias);
+        CALL calculaDataFinal13 (vDataInicio, vDataFinal, vDias);
         SET vPrecoTotal vDias vPrecoUnitario;
         SELECT cliente_id INTO vCliente FROM clientes WHERE nome vClienteNome;
         INSERT INTO alugueis VALUES (vAluguel, vCliente, vHospedagem, vDataInicio, vDataFinal, vPrecoTotal);
@@ -107,18 +114,21 @@ BEGIN
     END CASE;
 END$$
 DELIMITER ;
-Copiar código
-Assim a procedure é gerada com sucesso. Agora, incluiremos mais um aluguel. No fim do código, escrevemos CALL novoAluguel_43 ('10011', 'Livia Fogaça', '8635', '2023-04-20,10,40); e executamos.
+```
 
+Assim a procedure é gerada com sucesso. Agora, incluiremos mais um aluguel. No fim do código, escrevemos e executamos.
+
+```sql
 CALL novoAluguel_43 ('10011', 'Livia Fogaça', '8635', '2023-04-20,10,40);
-Copiar código
+```
 Feito isso, no retorno temos uma mensagem de erro dizendo que a procedure calculaDataFinal43 não existe. O nome correto é calculaDataFinal_43, então, fazemos essa correção na linha 38 e executamos novamente.
 
+```sql
 USE `insightplaces`;
-DROP procedure IF EXISTS `insightplaces`. `novoAluguel_43`;
+DROP procedure IF EXISTS `insightplaces`. `novoAluguel_13`;
 DELIMITER $$
 USE `insightplaces` $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_43`
+CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_13`
 (vAluguel VARCHAR(10), vClienteNome VARCHAR(150), vHospedagem VARCHAR(10), vDataInicio DATE, vDias INTEGER, vPrecoUnitario DECIMAL(10,2))
 BEGIN
     DECLARE vCliente VARCHAR(10);
@@ -150,24 +160,28 @@ BEGIN
     END CASE;
 END$$
 DELIMITER ;
-Copiar código
+```
+
 Assim, é exibida a mensagem dizendo que o aluguel foi incluído na base com sucesso. Para conferir, passamos o código SELECT * FROM alugueis WHERE aluguel_id = '10011' e executamos.
 
+```sql
 SELECT * FROM alugueis WHERE aluguel_id = '10011'
-Copiar código
+```
 Assim, temos o retorno abaixo:
 
-aluguel_id	cliente_id	hospedagem_id	data_inicio	data_fim	preco_total
-10011	1015	8635	2023-04-12	2023-05-03	400.00
-Null	Null	Null	Null	Null	Null
+
+    aluguel_id	cliente_id	hospedagem_id	data_inicio	data_fim	preco_total
+    10011	    1015	    8635	        2023-04-12	2023-05-03	400.00
+    Null	    Null	    Null	        Null	    Null	    Null
 A pessoa hóspede entrou no dia 20 de abril e saiu no dia 03 de maio, sendo dez dias no total, incluindo sábado e domingo. O valor monetário foi de 400.
 
 
 ## Question - Criando a Procedure de inclusão de cliente
- Próxima Atividade
+
 
 Analise uma procedure isolada apenas para o cálculo da data final realizada em aula:
 
+```sql
 CREATE DEFINER=`root`@`localhost` PROCEDURE `calculaDataFinal_43`(vDataInicio DATE, INOUT vDataFinal DATE, vDias INTEGER)
 BEGIN
 DECLARE vContador INTEGER;
@@ -230,26 +244,27 @@ BEGIN
        SELECT vMensagem;
     END CASE;
 END
-Copiar código
+```
+
 Para aprimorar a modularidade e reusabilidade do código na gestão de aluguéis, identificou-se uma oportunidade de isolar a lógica de cálculo do preço total e a inserção de dados na tabela de aluguéis em uma stored procedure separada, denominada inclusao_cliente_43. Este trecho de código desempenha um papel crucial no registro de novos aluguéis e precisa ser reorganizado para melhor manutenção e clareza.
 
-Como você criaria a stored procedure inclusao_cliente_43 para encapsular o cálculo do preço total e a inserção na tabela de aluguéis, e qual seria a forma correta de chamá-la na procedure principal novoAluguel_43?
-
-Alternativa incorreta
-Criar inclusao_cliente_43 com parâmetros vAluguel, vClienteNome, vHospedagem, vDataInicio, vDataFinal, vDias, vPrecoUnitario e chamar usando CALL inclusao_cliente_43(vAluguel, vClienteNome, vHospedagem, vDataInicio, vDataFinal, vDias, vPrecoUnitario);.
+Como você criaria a stored procedure inclusao_cliente_13 para encapsular o cálculo do preço total e a inserção na tabela de aluguéis, e qual seria a forma correta de chamá-la na procedure principal novoAluguel_13?
 
 
-Alternativa incorreta
-Criar inclusao_cliente_43 sem parâmetros e chamar dentro de novoAluguel_43 usando CALL inclusao_cliente_43();.
+- ( ) Criar inclusao_cliente_13 com parâmetros vAluguel, vClienteNome, vHospedagem, vDataInicio, vDataFinal, vDias, vPrecoUnitario e chamar usando CALL inclusao_cliente_43(vAluguel, vClienteNome, vHospedagem, vDataInicio, vDataFinal, vDias, vPrecoUnitario);.
 
 
-Alternativa incorreta
-Criar inclusao_cliente_43 apenas com o parâmetro vPrecoUnitario e chamar dentro de novoAluguel_43 com CALL inclusao_cliente_43(vPrecoUnitario);.
+
+- ( ) Criar inclusao_cliente_13 sem parâmetros e chamar dentro de novoAluguel_43 usando CALL inclusao_cliente_43();.
 
 
-Alternativa incorreta
-Criar inclusao_cliente_43 e incluir lógica não relacionada ao cálculo de preço ou inserção de aluguéis, chamando-a sem parâmetros.
+
+- ( ) Criar inclusao_cliente_13 apenas com o parâmetro vPrecoUnitario e chamar dentro de novoAluguel_43 com CALL inclusao_cliente_43(vPrecoUnitario);.
 
 
-Alternativa incorreta
-Criar inclusao_cliente_43 apenas com o parâmetro vDias para calcular vPrecoTotal e chamar dentro de novoAluguel_43 usando CALL inclusao_cliente_43(vDias);.
+
+- ( ) Criar inclusao_cliente_13 e incluir lógica não relacionada ao cálculo de preço ou inserção de aluguéis, chamando-a sem parâmetros.
+
+
+
+- ( ) Criar inclusao_cliente_13 apenas com o parâmetro vDias para calcular vPrecoTotal e chamar dentro de novoAluguel_13 usando CALL inclusao_cliente_13(vDias);.

@@ -11,10 +11,10 @@ Levando em consideração o que estamos fazendo com todos as aulas, vamos criar 
 
 ```sql
 SE `insightplaces`;
-DROP procedure IF EXISTS `insightplaces`.`novoAluguel_35`;
+DROP procedure IF EXISTS `insightplaces`.`novoAluguel_10`;
 DELIMITER $$
 USE `insightplaces`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_35`
+CREATE DEFINER=`root`@`localhost` PROCEDURE `novoAluguel_10`
 (vAluguel VARCHAR(10), vClienteNome VARCHAR(150), vHospedagem VARCHAR(10), vDataInicio  DATE, vDataFinal DATE, vPrecoUnitario DECIMAL(10,2))
 BEGIN
     DECLARE vCliente VARCHAR;

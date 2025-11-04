@@ -18,50 +18,60 @@ Então, precisamos buscar essa coluna, convertê-la para número, encontrar o ma
 
 Passamos SELECT aluguel_id e para converter esse campo em um número inteiro usamos o CAST(aluguel_id AS UNSIGNED) FROM alugueis.
 
+```sql
 SELECT aluguel_id, CAST(aluguel_id AS UNSIGNED) FROM alugueis;
-Copiar código
-Ao executar essa consulta, temos aparentemente o mesmo retorno. Na coluna aluguel_id temos uma lista de strings, mas em CAST() temos uma lista de números.
 
-aluguel_id	CAST(aluguel_id AS UNSIGNED)
-1	1
-10	10
-100	100
-1000	1000
-10000	10000
-//Dados omitidos	
+Ao executar essa consulta, temos aparentemente o mesmo retorno. Na coluna aluguel_id temos uma lista de strings, mas em CAST() temos uma lista de números.
+```
+    aluguel_id	CAST(aluguel_id AS UNSIGNED)
+    1	    1
+    10	    10
+    100	    100
+    1000	1000
+    10000	10000
+    //Dados omitidos	
 Tanto que, se pegarmos esse mesmo código e passarmos MAX() envolvendo aluguel_id, seguido de outro MAX(), envolvendo aluguei_id AS UNSIGNED, conforme abaixo:
 
+```sql
 SELECT MAX(aluguel_id), MAX(CAST(aluguel_id AS UNSIGNED)) FROM alugueis;
-Copiar código
+```
+
 Ao executar o código, obtemos valores diferentes.
 
-MAX(aluguel_id)	MAX(CAST(aluguel_id AS UNSIGNED))
-9999	10011
+    MAX(aluguel_id)	MAX(CAST(aluguel_id AS UNSIGNED))
+    9999	10011
+
 Em string, o 9999 é a maior string que temos dentro de todos que estão sendo listados. Quando convertemos para número, o maior número é o 10011, que é justamente o último que trabalhamos na inclusão de aluguel.
 
 Então, sabemos que precisamos ter o campo convertido para inteiro e aplicar o MAX(). Sobre esse MAX(), se quisermos encontrar o próximo ID de aluguel, somamos 1 passando + 1 antes de FROM alugueis.
 
+```sql
 SELECT MAX(aluguel_id), MAX(CAST(aluguel_id AS UNSIGNED)) + 1 FROM alugueis;
-Copiar código
+```
 Ao executar, o próximo seria o seguinte:
 
-MAX(CAST(aluguel_id AS UNSIGNED)) + 1
-10012
+    MAX(CAST(aluguel_id AS UNSIGNED)) + 1
+    10012
+
 Mas, esse aluguel_id tem que ser colocado dentro da procedure como string, afinal ele entrará nesse campo. Então precisamos buscar o campo atual e converter de novo.
 
 Para isso, copiamos a linha de código e colamos abaixo. Feito isso, antes de MAX(), envolvemos esse trecho de código com CAST(AS CHAR). Da seguinte forma:
 
+```sql
 SELECT CAST(MAX(aluguel_id), MAX(CAST(aluguel_id AS UNSIGNED)) + 1 AS CHAR) FROM alugueis;
-Copiar código
+```
+
 Ao executar, temos o seguinte retorno.
 
-CAST(MAX(CAST(aluguel_id AS UNSIGNED)) + 1 AS CHAR)
-10012
-Calculando IDs de aluguel automaticamente
+    CAST(MAX(CAST(aluguel_id AS UNSIGNED)) + 1 AS CHAR)
+    10012
+
+## Calculando IDs de aluguel automaticamente
 Agora, abrimos a última versão da procedure, copiamos o código e colamos no nosso novo script. Feito isso, na linha 13 e 16 mudamos para novoAluguel_44.
 
 Na linha 17, não usaremos mais o padrão vAluguel VARCHAR(10), pois ele será calculado sozinho dentro da procedure. Então apagamos. Porém, ele precisa ser declarado, então, na linha 20, abaixo de BEGIN, passamos DECLARE vAluguem VARCHAR(10).
 
+```sql
 -- Código omitido
 
 USE `insightplaces`;
@@ -77,11 +87,13 @@ BEGIN
     DECLARE vCliente VARCHAR(10);
     
 -- Código omitido
-Copiar código
+```
+
 Feito isso, podemos apagar as linhas comentadas. Antes de usarmos a vAluguel em INSERT INTO, nesse caso será abaixo de WHEN, passamos SELECT CAST(MAX(CAST(aluguel_id AS UNSIGNED)) +1 AS CHAR) INTO vAluguel_FROM alugueis.
 
 Dessa forma, essa linha pegará o maior valor do aluguel_id, somar um e usar como sendo um novo aluguel.
 
+```sql
 -- Código omitido
 
 WHEN vNumCliente = 1 THEN
@@ -94,23 +106,27 @@ WHEN vNumCliente = 1 THEN
     SELECT vMensagem;
 
 -- Código omitido
-Copiar código
-Selecionamos o código e executamos. Na lateral esquerda, atualizamos a lista de procedures e encontramos o novoAluguel_44. Para testar, passamos o código abaixo e executamos.
+```
 
+Selecionamos o código e executamos. Na lateral esquerda, atualizamos a lista de procedures e encontramos o novoAluguel_44. Para testar, passamos o código abaixo e executamos.
+```sql
 CALL novoAluguel_44('Livia Fogaça', '8635', '2023-05-15', 5, 45);
-Copiar código
+```
+
 Lembrando que agora não é mais necessário entrar com o identificador do aluguel.
 
 Ao executar, o aluguel incluído com sucesso. Então passamos SELECT * FROM alugueis WHERE. Agora, não sabemos o número do aluguel. Nesse caso, podemos melhorar nossa rotina.
 
 Na mensagem Aluguel incluido na base com sucesso, podemos incluir - ID. Fora das aspas simples, podemos concatenar passando + vAluguel.
 
+```sql
 -- Código omitido
 
 SET vMensagem = 'Aluguel incluido na base com sucesso - ID' + vAluguel;
 
 -- Código omitido
-Copiar código
+```
+
 Sabemos de antemão que se rodarmos a seleção SELECT MAX(aluguel_id), MAX(CAST(aluguel_id AS UNSIGNED)) FROM alugueis, temos o retorno abaixo.
 
 MAX(aluguel_id)	MAX(CAST(aluguel_id AS UNSIGNED))
