@@ -1,6 +1,5 @@
-# Funções criadas pelo usuário.
+# Criando funções no MySQL
 
-Criando a função
 No MySQL, clicamos no ícone identificado por uma folha de papel e um símbolo de "+" para criar uma nova aba. O comando básico que utilizamos para criar os objetos que geralmente precisamos no banco de dados é o CREATE. Então, o passamos e especificamos o objeto que queremos criar nessa tabela, seja um banco de dados, uma stored procedure ou uma função.
 
 Nesse caso, criaremos uma FUNCTION chamada retornoConstante(). O nome da função poderia ser qualquer outro, dependendo da sua criatividade ou do que ela fará.
@@ -19,6 +18,7 @@ Se temos um comando executado constantemente em diversos setores de uma empresa,
 
 Sabendo disso, voltamos a criação do código. Entre o BEGIN e o END, passamos o comando que queremos executar, nesse caso, a clausula RETUR seguido do queremos retornar, nesse caso o texto Seja bem-vindo(a), entre aspas simples. Após, passamos ; para indicar que encerramos a linha de código.
 
+```sql
 CREATE FUNCTION RetornoConstante() 
 RETURNS VARCHAR(50)
 BEGIN
@@ -26,8 +26,8 @@ BEGIN
 RETURN 'Seja bem-vindo(a)';
 
 END
-Copiar código
-No RETURNS passamos o início da criação da função para indicar o tipo de dado que será retornado. Já em RETURN passamos o valor que queremos retornar.
+```
+No `RETURNS` passamos o início da criação da função para indicar o tipo de dado que será retornado. Já em RETURN passamos o valor que queremos retornar.
 
 Suponhamos que estamos cadastrando um novo imóvel. Sempre que uma nova pessoa proprietária for cadastrada, essa função será executada com essa mensagem de boas-vindas.
 
@@ -49,6 +49,7 @@ Podemos passar no início da nossa função a palavra DELIMITER e indicar que o 
 
 Se não voltássemos o delimitador para o ;, utilizaríamos o $$ como delimitador padrão no MySQL. Então, após o END também passamos o $$, ficando da seguinte forma:
 
+```sql
 DELIMITER $$
 
 CREATE FUNCTION RetornoConstante() 
@@ -60,7 +61,9 @@ RETURN 'Seja bem-vindo(a)';
 END$$
 
 DELIMITER ;
-Copiar código
+```
+
+
 Agora, podemos criar nossa função. Selecionamos o código e clicamos no ícone de raio, localizado acima do campo de código, para executar.
 
 Assim, temos um erro. Embora aparentemente a função esteja correta, não estamos passando a palavra DETERMINISTIC utilizada para otimização do banco de dados e da execução dessas funções.
@@ -77,6 +80,7 @@ No decorrer, conforme criamos outras funções, vamos entender melhor sobre o de
 
 Sabendo disso, na linha 5, após o VARCHAR(50), passamos DETERMINISTIC.
 
+```sql
 DELIMITER $$
 
 CREATE FUNCTION RetornoConstante() 
@@ -88,16 +92,18 @@ RETURN 'Seja bem-vindo(a)';
 END$$
 
 DELIMITER ;
-Copiar código
+```
+
 Feito isso, selecionamos o código e o executamos novamente. Agora, sim, a função foi criada. Para executá-la, copiamos o trecho RetornoConstante() e colamos no fim do código.
 
 No início dessa linha, podemos chamá-la utilizando um SELECT. Poderíamos dar um alias, mas executaremos dessa forma.
 
+```sql
 SELECT RetornoConstante()
-Copiar código
+```
 Feito isso, temos o retorno abaixo:
 
-Seja bem-vindo(a)
+    Seja bem-vindo(a)
 
 Tivemos como retorno o que especificamos entre o BEGIN e o END. Podemos chamar diversas vezes esse SELECT clicando para executar e sempre teremos o mesmo valor.
 

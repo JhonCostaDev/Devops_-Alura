@@ -1,6 +1,6 @@
 # Funções de Agregação
 
-### Renomeando e fechando abas
+### Renomeando e fechando abas no mysql workbench
 Para renomear uma aba no mysql workbench, devemos clicar no botão com ícone de disquete, localizado na barra de ferramentas da aba, para salvar o script. Assim, salvamos em um local do nosso ambiente e renomeamos o primeiro script para AULA 1.
 
 Além disso, fechamos as outras abas que estavam abertas. Para isso, com a aba selecionada, basta clicar no botão "X" para fechá-la. Mas, tenha cuidado! Se você não tiver salvo o script, você irá perder todos os comandos da aba fechada.
@@ -11,13 +11,14 @@ Agora, vamos copiar esse comando SELECT * FROM reservas e abrir uma nova aba. Na
 ```sql
 SELECT * FROM reservas;
 ```
-        aluguel_id	cliente_id	hospedagem_id	data_inicio	data_fim	preco_total
-        1	1	8450	2023-07-15	2023-07-20	3240.00
-        10	10	198	2022-12-18	2022-12-21	2766.00
-        100	100	4019	2022-07-26	2022-07-28	452.00
-        1000	1000	5108	2023-01-25	2023-01-29	3704.00
-        10000	1000	8802	2023-12-20	2023-12-23	708.00
-…	…	…	…	…	…
+```bash
+aluguel_id	cliente_id  hospedagem_id	data_inicio	data_fim	preco_total
+1	        1	       8450	        2023-07-15      2023-07-20	3240.00
+10	        10	       198	        2022-12-18      2022-12-21	2766.00
+100	        100	       4019	        2022-07-26      2022-07-28	452.00
+1000	        1000	       5108	        2023-01-25      2023-01-29	3704.00
+10000	        1000	       8802	        2023-12-20      2023-12-23	708.00
+```
 Assim, teremos todas as informações de aluguéis, incluindo o preço total. Mas, além de aluguéis, temos outra tabela que traz uma informação bem interessante.
 
 Na próxima linha, vamos buscar por:
@@ -31,7 +32,7 @@ SELECT * FROM avaliacoes;
         100	100	4019	2	Péssima infraestrutura.
         1000	1000	5108	3	Maravilhosa serviços.
         10000	10000	8802	3	Excelente limpeza.
-…	…	…	…	…
+
 Ao selecionar apenas essa linha e a executar, notamos que também existe um campo de nota na tabela de avaliações. Portanto, é bem interessante buscar, por exemplo, qual é a média geral das notas que a clientela dá para as hospedagens do nosso catálogo.
 
 Vamos montar agora essas consultas que vão trazer essas informações tão relevantes.
@@ -50,7 +51,7 @@ SELECT nota FROM avaliacoes;
         2
         3
         3
-…
+
 Mas, na realidade, não é exatamente esse valor que queremos. Queremos a média dessas notas.
 
 A função de agregação usada para calcular a média de um campo é a `AVG().`
