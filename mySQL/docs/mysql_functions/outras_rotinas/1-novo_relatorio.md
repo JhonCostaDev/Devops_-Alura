@@ -17,19 +17,18 @@ Abriremos uma nova aba do MySQL para traduzir essas informações em consulta.
 Como temos uma questão de categorização nessas informações, podemos utilizar o CASE para validar as informações. Mas antes de chegarmos no CASE, precisamos buscar alguns dados.
 
 Os dados de dias e valores estão na nossa tabela de alugueis. Então, vamos montar um SELECT na tabela de aluguéis e executar:
-
+```sql
 SELECT * FROM alugueis;
-Copiar código
+```
 Temos como resultado os IDs de aluguel, cliente e hospedagem, e a data de início, data de fim e o preço total.
-
-Resultado da consulta (parcialmente transcrito, para conferir todos os registros, execute o código na sua máquina)
-
+```
 aluguel_id	cliente_id	hospedagem_id	data_inicio	data_fim	preco_total
 1	1	8469	2022-07-15	2022-07-20	3240.00
 10	10	198	2022-12-18	2022-12-21	2766.00
 100	100	4919	2022-07-26	2022-07-28	452.00
 1000	1000	5188	2022-01-25	2022-01-29	3784.00
 10000	10000	8802	2023-12-20	2023-12-23	708.00
+```
 Em cima disso, vou montar a consulta que categoriza os clientes em dias de hospedagem.
 
 Quais são as informações que queremos puxar da nossa tabela de aluguéis? Primeiro vamos buscar o cliente_id, porque queremos identificar a qual cliente o aluguel pertence, pois o desconto será para o cliente.
@@ -40,24 +39,27 @@ Para calcular essa informação, vamos usar a função DATEDIFF(), passando para
 
 Nossa seleção ficará assim:
 
+```sql
 SELECT
     cliente_id,
     data_inicio,
     data_fim,
     DATEDIFF(data_fim, data_inicio) AS TotalDias
 FROM alugueis
-Copiar código
+```
 Se executarmos essa consulta, teremos justamente o ID do cliente, a data de início da hospedagem, a data de fim e a diferença de dias entre as datas de início e fim de hospedagem de cada cliente:
 
-Resultado da consulta (parcialmente transcrito)
-
+```
 cliente_id	data_inicio	data_fim	TotalDias
-1	2022-07-15	2022-07-20	5
-10	2022-12-18	2022-12-21	3
-100	2022-07-26	2022-07-28	2
-1000	2023-01-25	2023-01-29	4
-10000	2023-12-20	2023-12-23	3
-Mas isso ainda não é tudo o que precisamos. Com base no total de dias, agora precisamos validar essa informação, ou seja, aplicar os descontos.
+1	        2022-07-15	2022-07-20	    5
+10	        2022-12-18	2022-12-21	    3
+100	        2022-07-26	2022-07-28	    2
+1000	    2023-01-25	2023-01-29	    4
+10000	    2023-12-20	2023-12-23	    3
+```
+
+Mas isso ainda não é tudo o que precisamos. Com base no 
+total de dias, agora precisamos validar essa informação, ou seja, aplicar os descontos.
 
 Vamos, então, continuar nossa consulta, adicionando uma vírgula após TotalDias para passar o CASE WHEN.
 
@@ -69,6 +71,7 @@ Usaremos essa mesma estrutura para os outros tipos de desconto e, no final, adic
 
 Por fim, fechamos o CASE com a cláusula END e nomeamos toda essa estrutura como DescontoPercentual.
 
+```sql
 SELECT
     cliente_id,
     data_inicio,
@@ -81,11 +84,9 @@ SELECT
         ELSE 0
     END AS DescontoPercentual
 FROM alugueis;
-Copiar código
+```
 Vamos selecionar e executar essa consulta. Receberemos o seguinte retorno:
-
-Resultado da consulta (parcialmente transcrito)
-
+```
 cliente_id	data_inicio	data_fim	TotalDias	DescontoPercentual
 1	2022-07-15	2022-07-20	5	5
 10	2022-12-18	2022-12-21	3	0
@@ -94,24 +95,29 @@ cliente_id	data_inicio	data_fim	TotalDias	DescontoPercentual
 10000	2023-12-20	2023-12-23	3	0
 ...	...	...	...	...
 1008	2023-12-18	2023-12-25	7	10
-Entre 4 e 6 dias de hospedagem, o cliente teve 5%. Abaixo de 4, zero desconto. Entre 7 e 10 dias, 10%.
+```
+`Entre 4 e 6 dias de hospedagem, o cliente teve 5%. Abaixo de 4, zero desconto. Entre 7 e 10 dias, 10%`.
 
 Já conseguimos calcular exatamente a quantidade de desconto que os clientes vão receber. Podemos até aplicar um filtro WHERE ao final da consulta para puxar aluguéis específicos que queremos verificar, um por vez, usando o aluguel_id. Por exemplo, vamos puxar o aluguel de ID igual a 1:
 
+```SQL
 -- código omitido
 WHERE aluguel_id = 1;
-Copiar código
+```
+
 Sabemos que o cliente de ID número 1 ficou 5 dias hospedado, então está eleito a um desconto de 5%:
 
-Resultado da consulta
-
+>Resultado da consulta
+```
 cliente_id	data_inicio	data_fim	TotalDias	DescontoPercentual
 1	2022-07-15	2022-07-20	5	5
+```
 Função para calcular desconto de clientes específicos
-Agora vamos transformar a consulta que criamos em uma função. Para isso, vamos usar o CREATE FUNCTION e dar um nome para essa função, que pode ser CalcularDescontoPorDias.
+Agora vamos transformar a consulta que criamos em uma função. Para isso, vamos usar o CREATE FUNCTION e dar um nome para essa função, que pode ser `CalcularDescontoPorDias`.
 
 Vamos retornar (RETURN) um número inteiro (INT) e definir um DETERMINISTIC. Depois fazemos um BEGIN e um END, além de adicionar o DELIMITER $$ antes da criação da função, para não esquecer, e também ao final, e adicionar $$ no END para delimitar o corpo da função.
 
+```SQL
 DELIMITER $$
 
 CREATE FUNCTION CalcularDescontoPorDias()
@@ -121,7 +127,8 @@ BEGIN
 END$$
 
 DELIMITER ;
-Copiar código
+```
+
 Vamos colocar toda a nossa consulta anterior entre o BEGIN e o END.
 
 O primeiro passo para transformar essa consulta em função será transformar o ID do aluguel em WHERE num parâmetro a ser recebido pela função.
@@ -138,6 +145,7 @@ Também vamos remover do SELECT os campos que selecionamos da tabela alugueis e 
 
 Por fim, após o WHERE, precisamos informar o que queremos retornar, que será o Desconto. Nossa função ficará assim:
 
+```SQL
 DELIMITER $$
 CREATE FUNCTION CalcularDescontoPorDias(AluguelID INT)
 RETURNS INT DETERMINISTIC
@@ -158,7 +166,8 @@ RETURN Desconto;
 END$$
 
 DELIMITER ;
-Copiar código
+```
+
 Em suma, criamos uma função com o método CREATE FUNCTION, para a qual passamos o AluguelID, solicitando-o como parâmetro. Retornamos um número inteiro e DETERMINISTIC, então abrimos o corpo da função com o BEGIN e fechamos com o END.
 
 Dentro dessa função, declaramos uma variável para armazenar o desconto, fizemos um SELECT calculando os dias de hospedagem do cliente e atribuindo descontos a depender do resultado. Inserimos esse resultado na variável Desconto.
@@ -166,15 +175,17 @@ Dentro dessa função, declaramos uma variável para armazenar o desconto, fizem
 Depois fizemos um filtro no campo aluguel_id para receber apenas o valor recebido na função como AluguelID, parâmetro que passamos ao chamar a nossa função. Então retornamos Desconto para exibir apenas o valor de desconto do aluguel em questão.
 
 Vamos executar essa função e depois chamá-la, passando o ID 1 de aluguel:
-
+```SQL
 SELECT CalcularDescontoPorDias(1);
-Copiar código
+```
+
 Ao executar esse comando, temos justamente o retorno que tivemos ao executar a nossa consulta: o cliente do aluguel 1 está eleito a 5% de desconto.
 
-Resultado da consulta
-
+### Resultado da consulta
+```
 cliente_id	data_inicio	data_fim	TotalDias	DescontoPercentual
 1	2022-07-15	2022-07-20	5	5
+```
+
 Já montamos a nossa consulta, já conseguimos montar também a nossa função, mas agora precisamos aplicar esse desconto no total do valor que o cliente pagou.
 
-Faremos isso no próximo conteúdo: montar uma nova consulta que utiliza essa função para podermos aplicar esse desconto no valor total que o cliente pagou, dentre os que já estão na nossa base de dados.

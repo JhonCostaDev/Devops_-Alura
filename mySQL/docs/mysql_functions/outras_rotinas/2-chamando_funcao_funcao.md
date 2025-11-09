@@ -1,13 +1,11 @@
-Chamando função em uma função
- Função para calcular o valor final com desconto
-Vamos abrir uma nova aba no MySQL e criar uma nova função que vai chamar a função que acabamos de criar. Ou seja, além de chamar essa função em um SELECT, como já sabemos, podemos chamar funções dentro de outras funções. Vamos usar esse recurso agora.
-
-Para criar a nova função, usaremos o CREATE FUNCTION e a chamaremos de CalcularValorFinalComDesconto().
+## Chamando função em uma função
+ 
+Para criar a nova função, usaremos o CREATE FUNCTION e a chamaremos de `CalcularValorFinalComDesconto`().
 
 Vamos criar a estrutura base da nossa função, começando pelo retorno. Nosso RETURN vai ser um DECIMAL de 10,2, ou seja, 10 caracteres com duas casas decimais, e ela vai ser determinística, o que resulta em: RETURNS DECIMAL(10,2) DETERMINISTIC.
 
 Vamos abrir o corpo da função com BEGIN e fechar aqui com o END. E, claro, vamos passar a cláusula DELIMITER no início e no fim.
-
+```sql
 DELIMITER $$
 
 CREATE FUNCTION CalcularValorFinalComDesconto()
@@ -18,7 +16,7 @@ BEGIN
 END$$
 
 DELIMITER ;
-Copiar código
+```
 Com essa base pronta, podemos criar a nossa função.
 
 Para isso, vamos precisar pegar o valor de desconto que vem da nossa função calcularDescontoPorDias e aplicar no valor total. Esse valor total está armazenado, na nossa tabela de alugueis, no campo preco_total, então não precisamos fazer nenhum cálculo - apenas selecionar esse campo com um SELECT.
@@ -54,7 +52,7 @@ Esse valor será calculado da seguinte forma: vamos pegar o ValorTotal e subtrai
 O cálculo entre parênteses será executado primeiro, multiplicando o valor e dividindo por 100, resultando no valor exato do desconto em reais, não mais em porcentagem. Esse valor será subtraído do valor total. O resultado disso será armazenado em ValorFinal.
 
 Então, no final, podemos fazer um RETURN ValorFinal. Nossa função ficará assim:
-
+```sql
 DELIMITER $$
 
 CREATE FUNCTION CalcularValorFinalComDesconto()
@@ -71,26 +69,18 @@ RETURN ValorFinal;
 END$$
 
 DELIMITER ;
-Copiar código
-Ao executar o código acima, a função é criada. Agora podemos chamá-la, passando o ID de aluguel igual a 1, para testar:
+```
 
+Ao executar o código acima, a função é criada. Agora podemos chamá-la, passando o ID de aluguel igual a 1, para testar:
+```
 SELECT CalcularValorFinalComDesconto(1);
-Copiar código
+```
+
 Temos como retorno o valor final, com desconto, do aluguel de ID 1, que foi igual a R$ 3072:
 
 Resultado da consulta
-
+```
 CalcularValorFinalComDesconto()
 3072.00
+```
 Podemos inclusive consultar todos os dados da tabela alugueis para verificar o valor inicial do aluguel de ID 1, e saberemos que era de R$ 3.240.
-
-Vamos abrir a calculadora rapidamente para conferir esse cálculo, subtraindo 5% de 3.240 por 5, o que dá R$ 162 de desconto, resultando num valor final de R$ 3.078. Esse foi o final que obtivemos na consulta!
-
-Já conseguimos, então, identificar que a nossa função está calculando corretamente, o que é bem legal!
-
-Porém, precisamos armazenar essas informações em algum lugar, tanto as informações de qual pessoa cliente está recebendo esse desconto quanto o valor total de sua hospedagem, assim como a porcentagem de desconto oferecida e o valor final com desconto aplicado.
-
-Afinal, essas informações também precisam ser passadas para as pessoas proprietárias dos imóveis cadastrados na Insight Places, então os valores devem ser registrados e alinhados.
-
-É isso que vamos fazer no nosso próximo vídeo: armazenar essas informações em uma tabela futuras consultas. Vamos lá!
-

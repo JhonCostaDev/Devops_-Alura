@@ -1,6 +1,5 @@
-Já criamos as nossas duas funções. A primeira calcula o valor do desconto a ser oferecido, e usamos para identificar se a pessoa cliente vai ter 5%, 10%, 15% ou nenhum desconto, dependendo da quantidade de dias que ficou hospedada em algum imóvel da Insight Places. A segunda função calcula o valor final da hospedagem, com o desconto aplicado.
+# Criando uma nova Tabela
 
-Com esses dois valores, conseguimos chegar ao ponto que as pessoas gestoras queriam. No entanto, também é muito importante que esses valores estejam acessíveis para quem precisar consultá-los após os clientes fecharem os seus aluguéis.
 
 Não vamos inserir essas informações na nossa tabela de aluguéis, mas criar uma nova tabela com um resumo do aluguel da pessoa cliente. Nela, teremos a porcentagem de desconto que a pessoa cliente recebeu, o valor final e o valor sem o desconto.
 
@@ -10,6 +9,7 @@ Além disso, diversos outros pontos podem ser avaliados com essas informações,
 
 Vamos criar essa tabela em uma nova aba. Começaremos pela sua estrutura base:
 
+```sql
 CREATE TABLE resumo_aluguel (
     aluguel_id VARCHAR(255),
     cliente_id VARCHAR(255),
@@ -20,12 +20,15 @@ CREATE TABLE resumo_aluguel (
     FOREIGN KEY (aluguel_id) REFERENCES alugueis(aluguel_id),
     FOREIGN KEY (cliente_id) REFERENCES clientes(cliente_id)
 );
-Copiar código
+```
+
 Criamos uma tabela chamada resumo_aluguel, onde teremos os seguintes campos: aluguel_id, que será um varchar de 255; cliente_id, que também será um varchar de 255; valor_total, que é um decimal de 10,2; descontoaplicado, também um decimal de 10,2; valor_final, um decimal de 10,2. Essas são todas as informações de que precisamos.
 
-Estamos fazendo o relacionamento entre a tabela de aluguéis e a tabela de clientes, com o PRIMARY KEY, o FOREIGN KEY e o REFERENCES, para inserir nessa nova tabela tanto a identificação do aluguel como da pessoa cliente.
+Estamos fazendo o relacionamento entre a tabela de aluguéis e a tabela de clientes, com o `PRIMARY KEY`, o `FOREIGN KEY` e o `REFERENCES`, para inserir nessa nova tabela tanto a identificação do aluguel como da pessoa cliente.
 
-Executamos o código e, com isso, criamos a nossa tabela. Mas como vamos pegar as informações calculadas pelas nossas duas funções e inserir nessa tabela? Vamos ter que fazer isso manualmente, calculando tudo novamente? Sim, é uma opção. Mas podemos utilizar outro recurso para fazer isso de forma automática: os triggers (gatilhos).
+Executamos o código e, com isso, criamos a nossa tabela. Mas como vamos pegar as informações calculadas pelas nossas duas funções e inserir nessa tabela? Vamos ter que fazer isso manualmente, calculando tudo novamente? Sim, é uma opção. Mas podemos utilizar outro recurso para fazer isso de forma automática: os `triggers` (gatilhos).
+
+## TRIGGERS
 
 Os triggers são um recurso da linguagem SQL que, ao serem criados, são acionados sempre que algo acontecer em uma tabela, o qual associamos a essa trigger.
 
