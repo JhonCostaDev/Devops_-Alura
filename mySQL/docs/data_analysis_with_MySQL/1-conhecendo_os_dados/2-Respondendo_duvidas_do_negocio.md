@@ -1,20 +1,22 @@
-Já carregamos os dados e fizemos a primeira exploração. A ideia nesse projeto é responder questionamentos da área de negócio. Mas, o que isso significa?
+# Respondendo dúvidas de negócio
+
+A ideia nesse projeto é responder questionamentos da área de negócio. Mas, o que isso significa?
 
 Queremos trazer métricas e insights sobre os dados para auxiliar as pessoas proprietárias dos imóveis da Insight Place a tomar suas decisões.
 
-Uma das métricas que pensamos em explorar, baseada na exploração que fizemos nos dados, é entender a taxa de ocupação. Isso significa, desde que um imóvel ficou disponível, quantos desses dias ele ficou alugado e quantos ficou vago.
+Uma das métricas que pensamos em explorar, baseada na exploração que fizemos nos dados, é `entender a taxa de ocupação`. Isso significa, desde que um imóvel ficou disponível, quantos desses dias ele ficou alugado e quantos ficou vago.
 
 Com essa informação, podemos gerar métricas em relação à taxa de ocupação por região, por época do ano, e isso pode ajudar a pessoa proprietária a tomar suas decisões em relação a preços e outros aspectos.
 
-Criando os cálculos
-Para fazer isso, preparamos uma consulta que faz esse cálculo e queremos explorá-la com você. Na tabela alugueis, temos as informações de data_inicio e data_fim do aluguel, assim como hospedagem_id, ou seja, o imóvel.
+## Criando os cálculos
+Para fazer isso, preparamos uma consulta que faz esse cálculo. Na tabela alugueis, temos as informações de `data_inicio` e `data_fim` do aluguel, assim como `hospedagem_id`, ou seja, o imóvel.
 
 Sendo assim, temos vários aluguéis para o mesmo imóvel. Se pensarmos no imóvel 1, ele foi alugado por uma, dua, três vezes e tem vários registros na tabela de aluguéis.
 
 Uma das informações que queremos é a primeira data. Não temos na tabela a informação de quando o imóvel ficou disponível para aluguel. No entanto, podemos calcular aproximadamente usando a primeira vez que ele foi alugado.
 
 O código que usaremos é o abaixo, vamos entendê-lo por partes.
-
+```sql
 SELECT
     hospedagem_id,
     MIN(data_inicio) AS primeira_data,
@@ -27,7 +29,8 @@ GROUP BY
     hospedagem_id
 ORDER BY taxa_ocupacao DESC
 ;
-Copiar código
+```
+
 Para descobrirmos essa informação, usaremos a função MIN(). Nesse caso, estamos agrupando os dados pelo ID da hospedagem, então, a casa número 1 foi colocada em aluguel e alugada várias vezes.
 
 Queremos saber quando ela foi alugada pela primeira vez. Usaremos a função MIN(), que a partir de todas as data de início, pegará a menor. Chamamos isso de primeira_data.

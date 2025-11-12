@@ -1,4 +1,5 @@
-Transcrição
+# Análise de Desempenho
+
 Nós somos o time de analistas de dados da Insight Places e atendemos a demanda de auxiliar as pessoas proprietárias dos imóveis alugados em nosso site. Como fazemos isso? Através dos dados.
 
 Já criamos a taxa de ocupação, por exemplo, para entender, dos dias que determinado imóvel esteve disponível, quantos ele ficou ocupado. Essa informação é importante, mas precisamos refiná-la, pois existe a situação em que uma pessoa proprietária pode ter mais de um imóvel.
