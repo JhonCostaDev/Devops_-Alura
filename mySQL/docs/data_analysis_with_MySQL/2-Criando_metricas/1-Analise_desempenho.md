@@ -19,7 +19,7 @@ Criando um novo script
 Começaremos criando um novo script. Para isso, no canto superior esquerdo, clicaremos no ícone "SQL +". Nesse novo script, queremos focar na métrica que mencionamos anteriormente.
 
 Primeiramente, vamos explorar se existe essa situação. Para facilitar a exploração das consultas, vamos colar o seguinte código no script e entender por partes como a métrica foi construída:
-
+```sql
 USE insightplaces;
 
 SELECT
@@ -33,8 +33,9 @@ GROUP BY
     p.proprietario_id
 ORDER BY
     total_hospedagens DESC;
-Copiar código
-Analisando o código
+```
+
+## Analisando o código
 O primeiro trecho de código é o USE insightplaces. É importante sempre retomar isso, pois precisamos selecionar o banco de dados que vamos trabalhar no script. Nesse caso, indicamos que é o insightplaces, nosso banco de dados. Dito isso, vamos executar essa consulta.
 
 Não aparecerá nada na tela, mas se clicarmos no segundo ícone do canto superior direito, teremos a indicação no menu "Output" de que foi executado o comando USE insightplaces.
