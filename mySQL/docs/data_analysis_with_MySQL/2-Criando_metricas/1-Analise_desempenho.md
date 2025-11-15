@@ -43,14 +43,15 @@ Não aparecerá nada na tela, mas se clicarmos no segundo ícone do canto superi
 Em seguida, temos a consulta principal, cujo objetivo é entender se temos pessoas proprietárias com mais de um imóvel no banco de dados. Vamos executar o código para visualizar o resultado?
 
 Visualização dos seis primeiros registros da tabela. Para visualizá-la na íntegra, execute a consulta na sua máquina.
-
-proprietario	total_hospedagens
+```
+proprietario	        total_hospedagens
 Dra. Kamilly Almeida	2
-Fernanda Vieira	1
-Helena Oliveira	1
-Eloah Campos	1
-Eduarda da Mata	1
-Sr. Bruno Carvalho	1
+Fernanda Vieira	        1
+Helena Oliveira	        1
+Eloah Campos	        1
+Eduarda da Mata	        1
+Sr. Bruno Carvalho	    1
+```
 Temos, por exemplo, a informação de que a Dra. Kamilly Almeida possui o total de 2 hospedagens, enquanto o restante tem apenas 1 hospedagem. Como conseguimos esse resultado?
 
 Na consulta, fazemos a seleção (SELECT) da coluna do nome, então usamos p.nome AS proprietario. Em seguida, fazemos uma contagem com a função COUNT() recebendo DISTINCT h.hospedagem_id, isto é, o ID das hospedagens. Chamamos isso de total_hospedagens.
@@ -70,6 +71,7 @@ Foi muito importante identificar isso, porque se trata de uma situação que a n
 Revisitando a métrica de taxa de ocupação
 Vamos retomar a métrica feita anteriormente sobre a taxa de ocupação (taxa_ocupacao), para considerar agora essa nova informação, de que uma pessoa proprietária pode ter mais de um imóvel.
 
+```sql
 -- código omitido
   
 SELECT 
@@ -80,16 +82,17 @@ SELECT
   ROUND((SUM(DATEDIFF(data_fim, data_inicio)) / DATEDIFF(MAX(data_fim), MIN(data_inicio))) * 100) AS taxa_ocupacao
 
 -- código omitido
-Copiar código
+```
 Nessa métrica, calculamos a data de início (data_inicio) utilizando a função MIN(); somamos com a função SUM() as diferenças das datas (data_fim e data_inicio) para calcular os dias em que o imóvel ficou ocupado (dias_ocupados); e a partir dessas datas, calculamos a diferença (DATEDIFF()) para descobrir o total de dias que esse imóvel foi disponível (total_dias).
 
 Depois dividimos o total de dias ocupados (dias_ocupados) pelo total de dias disponíveis (total_dias) para calcular a taxa de ocupação (taxa_ocupacao).
 
 Vamos reutilizar essa conta, pois ela também faz sentido nesse novo cenário, mas combinaremos com a nova consulta criada, onde trazemos as informações da pessoa proprietária.
 
-Criando uma nova consulta
+## Criando uma nova consulta
 Novamente, vamos colar o código da nova consulta no script que criamos anteriormente. Feito isso, iremos analisar os comandos por partes.
 
+```sql
 -- código omitido
 
 SELECT
@@ -117,7 +120,7 @@ GROUP BY
     p.proprietario_id
 ORDER BY
     total_dias DESC;
-Copiar código
+```
 Trata-se de uma consulta mais elaborada e extensa, pois utilizamos uma subconsulta, de onde vêm as informações da consulta utilizada na aula anterior.
 
 Nesta consulta, pegamos cada imóvel por hospedagem_id; fazemos o cálculo da primeira_data em que ele ficou disponível; das datas em que ele esteve ocupado, fazemos a soma para obter o total de dias ocupados (dias_ocupados); e por fim, pegamos a última data (data_fim) e a primeira data (data_inicio) de aluguel para descobrir quantos dias ele ficou disponível (total_dias).
@@ -146,6 +149,7 @@ Após analisar a consulta, vamos executá-la para visualizar o resultado obtido:
 
 Visualização dos seis primeiros registros da tabela. Para visualizá-la na íntegra, execute a consulta na sua máquina.
 
+```
 proprietario	primeira_data	total_dias	dias_ocupados	taxa_ocupacao
 Dra. Kamilly Almeida	2022-03-07	1466	1304	89
 Sra. Cecília Gonçalves	2022-03-07	736	648	88
@@ -153,9 +157,10 @@ Alana Oliveira	2022-03-07	736	622	85
 Pedro Miguel Lopes	2022-03-07	736	647	88
 Davi Luiz Carvalho	2022-03-07	736	645	88
 Daniel Farias	2022-03-07	736	661	90
+```
 A primeira ocorrência é a Dra. Kamilly Almeida, que sabemos ter dois imóveis. Desses dois imóveis, um ficou disponível para aluguel em março de 2022; o total de dias que ele ficou disponível foi 1466, o dobro da segunda ocorrência, indicando que realmente são considerados dois imóveis no cálculo; desses 1466 dias, em 1300 o imóvel esteve ocupado; e a taxa de ocupação ficou em 89%.
 
-Conclusão
+## Conclusão
 Perceba que transformamos a métrica, de modo que ela fique mais próxima da pessoa proprietária. Como tentamos resolver os problemas dessas pessoas, conseguimos visualizar melhor os dados e o time de negócio pode usar essa tabela para conversar com cada pessoa proprietária.
 
 Também podemos disponibilizar essas quatro informações para a pessoa proprietária tomar as suas ações, entender há quanto tempo está na plataforma, como os imóveis estão performando, e assim por diante.
@@ -165,3 +170,81 @@ Além disso, com essa métrica, podemos gerar outras derivadas, como a média de
 Com a tabela que geramos e a métrica de taxa de ocupação, pensando em cada pessoa proprietária, podemos derivar muitas outras. Incentivamos você a pensar quais métricas seriam relevantes para o nosso negócio e para as pessoas proprietárias, e elaborar um pouco mais a métrica que temos atualmente.
 
 No próximo passo, iremos considerar outras informações. Neste vídeo, focamos na pessoa proprietária, mas e as informações de quando os aluguéis acontecem, tanto em relação à época do ano, quanto em relação à região do país? Isso será muito relevantes para a nossa análise. Até mais!
+
+
+## Question Analisando a performance de proprietários com MySQL
+
+
+Imagine que você é um(a) analista de dados na Insight Places, uma plataforma que conecta proprietários de imóveis a potenciais inquilinos. Sua missão é fornecer insights valiosos para os proprietários, ajudando-os a otimizar suas estratégias de aluguel. Após implementar métricas básicas como taxa de ocupação e total de hospedagens, você percebe a necessidade de aprofundar sua análise para fornecer recomendações mais precisas. Você decide então criar uma métrica que combine a taxa de ocupação com o preço médio diário dos alugueis, permitindo identificar oportunidades de ajuste nos preços.
+
+Como você criaria uma consulta SQL para calcular a taxa de ocupação combinada com o preço médio diário de aluguel para cada proprietário, utilizando as tabelas proprietarios, hospedagens, alugueis e enderecos?
+
+```sql
+    SELECT
+        p.nome AS proprietario,
+        ROUND(AVG(a.preco_total / DATEDIFF(a.data_fim, a.data_inicio)), 2) AS preco_medio_diario,
+        ROUND((SUM(DATEDIFF(a.data_fim, a.data_inicio)) / (DATEDIFF(MAX(a.data_fim), MIN(a.data_inicio)) * COUNT(DISTINCT h.hospedagem_id))) * 100, 2) AS taxa_ocupacao
+    FROM
+        proprietarios p
+    JOIN
+        hospedagens h ON p.proprietario_id = h.proprietario_id
+    JOIN
+        alugueis a ON h.hospedagem_id = a.hospedagem_id
+    GROUP BY
+        p.proprietario_id;
+```
+```sql
+    SELECT
+        p.nome AS proprietario,
+        ROUND(AVG(a.preco_total / DATEDIFF(a.data_fim, a.data_inicio)), 2) AS preco_medio_diario,
+        ROUND((SUM(DATEDIFF(a.data_fim, a.data_inicio)) / COUNT(a.aluguel_id)) * 100) AS taxa_ocupacao
+    FROM
+        proprietarios p
+    JOIN
+        hospedagens h ON p.proprietario_id = h.proprietario_id
+    JOIN
+        alugueis a ON h.hospedagem_id = a.hospedagem_id
+    GROUP BY
+        p.proprietario_id;
+```
+```sql
+    SELECT
+        p.nome AS proprietario,
+        ROUND(AVG(a.preco_total / DATEDIFF(a.data_fim, a.data_inicio)), 2) AS preco_medio_diario,
+        ROUND((SUM(DATEDIFF(a.data_fim, a.data_inicio)) / 365) * 100, 2) AS taxa_ocupacao
+    FROM
+        proprietarios p
+    JOIN
+        hospedagens h ON p.proprietario_id = h.proprietario_id
+    JOIN
+        alugueis a ON h.hospedagem_id = a.hospedagem_id
+    GROUP BY
+        p.proprietario_id;
+```
+```sql
+    SELECT
+        p.nome AS proprietario,
+        ROUND(AVG(a.preco_total / DATEDIFF(a.data_fim, a.data_inicio)), 2) AS preco_medio_diario,
+        ROUND((SUM(DATEDIFF(a.data_fim, a.data_inicio)) / SUM(DATEDIFF(MAX(a.data_fim), MIN(a.data_inicio)))) * 100, 2) AS taxa_ocupacao
+    FROM
+        proprietarios p
+    JOIN
+        hospedagens h ON p.proprietario_id = h.proprietario_id
+    JOIN
+        alugueis a ON h.hospedagem_id = a.hospedagem_id
+    GROUP BY
+        p.proprietario_id;
+```
+```sql
+    SELECT
+        p.nome AS proprietario,
+        SUM(a.preco_total) / COUNT(a.aluguel_id) AS preco_medio_diario,
+        (COUNT(a.aluguel_id) / COUNT(DISTINCT h.hospedagem_id)) * 100 AS taxa_ocupacao
+    FROM
+        proprietarios p
+    JOIN
+        hospedagens h ON p.proprietario_id = h.proprietario_id
+    JOIN
+        alugueis a ON h.hospedagem_id = a.hospedagem_id
+    GROUP BY
+        p.proprietario_id;
