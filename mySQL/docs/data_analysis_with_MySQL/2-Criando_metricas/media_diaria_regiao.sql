@@ -1,3 +1,4 @@
+-- Active: 1761826560580@@137.131.202.142@3306@insightplaces2
 SELECT 
 CASE 
     WHEN e.estado IN ('AM','AC','AP','PA','RO','RR','TO') THEN 'Norte'
