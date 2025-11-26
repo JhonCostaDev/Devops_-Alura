@@ -52,3 +52,7 @@ Desktop.ini
 # === Optional: Git hooks or local config ===
 .git/hooks/
 .gitignore.local
+
+# data
+.db
+.csv
